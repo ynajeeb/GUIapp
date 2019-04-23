@@ -116,7 +116,7 @@ public class Main extends Application {
 		Button submit = new Button("Submit");
 		Label choiceLabel = new Label("Correct Choice? ");
 
-		//button to select correct choice
+		//button to select correct multiple choice answer
 		RadioButton radio1, radio2, radio3, radio4, radio5;
 		radio1=new RadioButton("Choice 1: ");
 		radio2= new RadioButton("Choice 2: ");
@@ -132,7 +132,7 @@ public class Main extends Application {
 		choice4 = new TextField("");
 		choice5 = new TextField("");
 
-		
+		// creates a set of all the radioButtons in order for only one correct option to be chosen
 		ToggleGroup question1= new ToggleGroup();
 
 		radio1.setToggleGroup(question1);
@@ -141,9 +141,9 @@ public class Main extends Application {
 		radio4.setToggleGroup(question1);
 		radio5.setToggleGroup(question1);
 
-
+		// can't click the submit button if no correct choice was selected 
 		submit.setDisable(true);
-
+ 		// can click on the submit button once a correct choice is selected
 		radio1.setOnAction(e -> submit.setDisable(false) );
 		radio2.setOnAction(e -> submit.setDisable(false) );
 		radio3.setOnAction(e -> submit.setDisable(false) );
@@ -151,21 +151,25 @@ public class Main extends Application {
 		radio5.setOnAction(e -> submit.setDisable(false) );
 
 
-		
+		// makes a combobox of topics that contains all the current topics, and the ability to create a new topic by typing
+		// into the combobox the new topic name
 		ComboBox<String> comboBox = new ComboBox<String>();
 		Label topicPrompt = new Label("Select Topic: ");
 		HBox topicBox = new HBox();
 		comboBox.getItems().addAll("Dinosaurs", "US History", "Science","Computer Science","Art","Health", "Create New Topic");
 		comboBox.setEditable(true);
+		// adds to the hBox the label and the topics
 		topicBox.getChildren().addAll(topicPrompt, comboBox);
 		topicBox.setSpacing(100);
 		topicBox.setAlignment(Pos.CENTER);
 		
 		
 
-		
+		// contains the new choices for the added question
 		VBox container = new VBox();
+		// contains the RadioBoxes which indicate the correct choice of the question 
 		VBox correct = new VBox();
+		// contains the textFields that the user can input choices into
 		VBox answer = new VBox();
 		HBox choices = new HBox();
 		HBox saveOption = new HBox();
