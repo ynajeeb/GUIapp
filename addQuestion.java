@@ -165,13 +165,15 @@ public class Main extends Application {
 		
 		
 
-		// contains the new choices for the added question
-		VBox container = new VBox();
 		// contains the RadioBoxes which indicate the correct choice of the question 
 		VBox correct = new VBox();
 		// contains the textFields that the user can input choices into
 		VBox answer = new VBox();
+		// the HBox which contains the correct RadioBoxes, and the answer TextFields
 		HBox choices = new HBox();
+		// contains the HBox choices and the TextField for the Question itself and the Topic list
+		VBox container = new VBox();
+		// contains the two buttons that either save the current question or allow the user to add more questions
 		HBox saveOption = new HBox();
 		Button addMoreQ = new Button("Add More Questions");
 		Button save = new Button("Save");
