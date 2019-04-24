@@ -8,10 +8,13 @@ package application;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -29,15 +32,11 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			BorderPane root = new BorderPane();
+			//main greeting screen
+			GridPane root =  greetingScreen(primaryStage);
 			
 			
-			
-			//main screen 
-			root= greetingScreen(root);
-			
-			
-			Scene scene = new Scene(root,600,400);
+			Scene scene = new Scene(root,700,500);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Quiz Generator");
@@ -48,75 +47,80 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 	}
+	
 	//private helper method that sets the main screen/greeting screen
-	private BorderPane greetingScreen(BorderPane root) {
+	private GridPane greetingScreen(Stage primaryStage) {
+		GridPane root = new GridPane();
 		//screenContainer contains the main contents of the greeting screen
-		HBox screenContainer = new HBox();
+		VBox screenContainer = new VBox();
 		//greetScreen contains the text of the greeting screen
 		VBox greetScreen = new VBox();
-		Label welcomeLabel = new Label("Quiz Generator");
-		Label numQ = new Label("Number of Questions:");
-		Label totAvailQ = new Label("out of 1000 available questions");
+		Label totAvailQ = new Label("out of 1000 available questions"); //displays the total amount of questions available
 		TextField numQText = new TextField (); //text field for user to enter desired number of questions
 		HBox qBox = new HBox(); //qBox contains the nodes related to the the screen asking for number of questions
-		qBox.getChildren().addAll(numQ, numQText, totAvailQ);
+		qBox.getChildren().addAll( new Label("Number of Questions:"), numQText, totAvailQ);
 		qBox.setSpacing(20);
 		
 		
-		Label topicLabel = new Label("Select desired topic(s):");
+
 		VBox topicBox = new VBox();	//contains a checklist of topics
-		CheckBox t0 = new CheckBox("Dinosaurs");
-		CheckBox t1 = new CheckBox("US History");
-		CheckBox t2 = new CheckBox("Science");
-		CheckBox t3 = new CheckBox("Computer Science");
-		CheckBox t4 = new CheckBox("Art");
-		CheckBox t5 = new CheckBox("Health");
+		CheckBox t0, t1, t2, t3, t4, t5;
+		t0 = new CheckBox("Dinosaurs");
+		t1 = new CheckBox("US History");
+		t2 = new CheckBox("Science");
+		t3 = new CheckBox("Computer Science");
+		t4 = new CheckBox("Art");
+		t5 = new CheckBox("Health");
 		topicBox.setSpacing(10);
-		topicBox.getChildren().addAll(topicLabel, t0,t1,t2,t3,t4,t5);
+		topicBox.getChildren().addAll(new Label("Select desired topic(s):"), t0,t1,t2,t3,t4,t5);
 		
 		
-		greetScreen.getChildren().addAll(welcomeLabel, qBox, topicBox);
+		greetScreen.getChildren().addAll(new Label("Quiz Generator"), qBox, topicBox);
 		greetScreen.setSpacing(20);
 		greetScreen.setAlignment(Pos.CENTER);
-		VBox emptyLeft = new VBox(); //to create empty white space to the left
-		//placing all contents of the greeting screen into screenContainer
-		screenContainer.getChildren().addAll(emptyLeft, greetScreen); 
-		screenContainer.setAlignment(Pos.CENTER);
-		
-		root.setCenter(screenContainer);
 
-		HBox icons = new HBox(); //holds buttons
+		
+
+		HBox icons = new HBox(); //holds clickable buttons 
 		Button addQ = new Button("Add Question");
 		Button genQ = new Button("Generate Quiz");
 		icons.getChildren().addAll(addQ,genQ);
+		icons.setAlignment(Pos.BOTTOM_CENTER);
 		icons.setSpacing(390);
-		addQ.setOnAction(click -> 
+		addQ.setOnAction(e -> 
 			{	//when addQ button is clicked, takes them to different screen
 				//where they can fill out the appropriate form to insert a question
-	            BorderPane addQScreen = new BorderPane();
-	            addQScreen = addQuestionScreen(addQScreen);
-	            Scene scene = new Scene(addQScreen,600,400);
-	            Stage stage = new Stage();
-	            stage.initOwner(addQScreen.getScene().getWindow());
-	            stage.setTitle("Add Question");
-	            stage.setScene(scene);
-	            stage.show();
+	            GridPane addQScreen =  addQuestionScreen();
+	            Scene scene = new Scene(addQScreen,700,500);
+	            final Stage dialog = new Stage();
+	            dialog.initModality(Modality.APPLICATION_MODAL);
+	            dialog.initOwner(primaryStage);
+	            dialog.setTitle("Add Question");
+	            dialog.setScene(scene);
+	            dialog.show();
 	        });
 		
-		root.setBottom(icons);
+		
+		//placing all contents of the greeting screen into screenContainer 
+		screenContainer.getChildren().addAll( greetScreen, icons);
+		screenContainer.setSpacing(80);
+				
+		root.add(screenContainer, 1,1);
+		root.setAlignment(Pos.CENTER);
 		
 		
 		return root;
 		
 	}
-	
-	private BorderPane addQuestionScreen(BorderPane root) {
+	//helper method for adding question screen
+	private GridPane addQuestionScreen() {
+		GridPane root = new GridPane();
 		//text field for user to type in their question
 		TextField question = new TextField("Enter Question Here:");
 		Button submit = new Button("Submit");
-		Label choiceLabel = new Label("Correct Choice? ");
+		
 
-		//button to select correct multiple choice answer
+		//button to select correct choice
 		RadioButton radio1, radio2, radio3, radio4, radio5;
 		radio1=new RadioButton("Choice 1: ");
 		radio2= new RadioButton("Choice 2: ");
@@ -134,16 +138,15 @@ public class Main extends Application {
 
 		// creates a set of all the radioButtons in order for only one correct option to be chosen
 		ToggleGroup question1= new ToggleGroup();
-
 		radio1.setToggleGroup(question1);
 		radio2.setToggleGroup(question1);
 		radio3.setToggleGroup(question1);
 		radio4.setToggleGroup(question1);
 		radio5.setToggleGroup(question1);
 
-		// can't click the submit button if no correct choice was selected 
+		// can't click the submit button if no correct choice was selected
 		submit.setDisable(true);
- 		// can click on the submit button once a correct choice is selected
+		// can click on the submit button once a correct choice is selected
 		radio1.setOnAction(e -> submit.setDisable(false) );
 		radio2.setOnAction(e -> submit.setDisable(false) );
 		radio3.setOnAction(e -> submit.setDisable(false) );
@@ -165,24 +168,23 @@ public class Main extends Application {
 		
 		
 
+		// contains the HBox choices and the TextField for the Question itself and the Topic list
+		VBox container = new VBox();
 		// contains the RadioBoxes which indicate the correct choice of the question 
 		VBox correct = new VBox();
 		// contains the textFields that the user can input choices into
 		VBox answer = new VBox();
 		// the HBox which contains the correct RadioBoxes, and the answer TextFields
 		HBox choices = new HBox();
-		// contains the HBox choices and the TextField for the Question itself and the Topic list
-		VBox container = new VBox();
 		// contains the two buttons that either save the current question or allow the user to add more questions
 		HBox saveOption = new HBox();
 		Button addMoreQ = new Button("Add More Questions");
 		Button save = new Button("Save");
-		Label answerLabel = new Label("Answer:");
-		answerLabel.setAlignment(Pos.CENTER);
+		
 		saveOption.getChildren().addAll(save, addMoreQ);
 		choices.getChildren().addAll(correct, answer);
-		correct.getChildren().addAll(choiceLabel, radio1,radio2,radio3,radio4,radio5);
-		answer.getChildren().addAll(answerLabel , choice1,choice2,choice3,choice4,choice5);
+		correct.getChildren().addAll(new Label("Correct Choice? "), radio1,radio2,radio3,radio4,radio5);
+		answer.getChildren().addAll(new Label("Answer:"), choice1,choice2,choice3,choice4,choice5);
 		answer.setSpacing(20);
 		correct.setSpacing(26);
 		choices.setSpacing(100);
@@ -191,12 +193,14 @@ public class Main extends Application {
 		saveOption.setSpacing(403);
 		
 		//Adding all the nodes to the observable list 
-		container.getChildren().addAll(topicBox, question, choices);   
+		container.getChildren().addAll(topicBox, question, choices, saveOption); 
+		container.setSpacing(40);
 		container.setAlignment(Pos.CENTER);
+		saveOption.setAlignment(Pos.BOTTOM_CENTER);
 	
 		
-		root.setCenter(container);
-		root.setBottom(saveOption);
+		root.add(container, 1,1);
+		root.setAlignment(Pos.CENTER);
 		
 
 
